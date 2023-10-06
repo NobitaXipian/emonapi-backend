@@ -2,12 +2,14 @@ package com.xipian.emonapi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.xipian.emonapi.annotation.AuthCheck;
 import com.xipian.emonapi.common.*;
 import com.xipian.emonapi.constant.CommonConstant;
 import com.xipian.emonapi.constant.UserConstant;
 import com.xipian.emonapi.exception.BusinessException;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.xipian.emonapi.model.entity.InterfaceInfo;
@@ -261,6 +263,42 @@ public class InterfaceInfoController {
         interfaceInfo.setId(id);
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
         boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 测试调用
+     *
+     * @param interfaceInfoInvokeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                      HttpServletRequest request) {
+        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"接口已关闭");
+        }
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        EmonApiClient tempClient = new EmonApiClient(accessKey, secretKey);
+        // 通过Gson解析传递过来的参数
+        Gson gson = new Gson();
+        com.xipian.emonapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.xipian.emonapiclientsdk.model.User.class);
+
+        // 通过SDK调用
+        String result = tempClient.getUsernameByPost(user);
         return ResultUtils.success(result);
     }
 }

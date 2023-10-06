@@ -1,12 +1,14 @@
 package com.xipian.emonapi.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xipian.emonapi.common.ErrorCode;
 import com.xipian.emonapi.constant.UserConstant;
+import com.xipian.emonapi.exception.BusinessException;
 import com.xipian.emonapi.mapper.UserMapper;
 import com.xipian.emonapi.model.entity.User;
-import com.xipian.emonapi.exception.BusinessException;
 import com.xipian.emonapi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,10 +62,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
-            // 3. 插入数据
+            // 3.分配accessKey,secretKey
+            String accessKey = DigestUtil.md5Hex(SALT+userAccount+ RandomUtil.randomNumbers(6));
+            String secretKey = DigestUtil.md5Hex(SALT+userAccount+ RandomUtil.randomNumbers(8));
+            // 4. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setAccessKey(accessKey);
+            user.setSecretKey(secretKey);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
