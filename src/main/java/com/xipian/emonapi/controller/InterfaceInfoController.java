@@ -3,10 +3,7 @@ package com.xipian.emonapi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xipian.emonapi.annotation.AuthCheck;
-import com.xipian.emonapi.common.BaseResponse;
-import com.xipian.emonapi.common.DeleteRequest;
-import com.xipian.emonapi.common.ErrorCode;
-import com.xipian.emonapi.common.ResultUtils;
+import com.xipian.emonapi.common.*;
 import com.xipian.emonapi.constant.CommonConstant;
 import com.xipian.emonapi.constant.UserConstant;
 import com.xipian.emonapi.exception.BusinessException;
@@ -15,8 +12,10 @@ import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.xipian.emonapi.model.entity.InterfaceInfo;
 import com.xipian.emonapi.model.entity.User;
+import com.xipian.emonapi.model.enums.InterfaceInfoStatusEnum;
 import com.xipian.emonapi.service.InterfaceInfoService;
 import com.xipian.emonapi.service.UserService;
+import com.xipian.emonapiclientsdk.client.EmonApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +41,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private EmonApiClient emonApiClient;
 
     // region 增删改查
 
@@ -198,4 +200,67 @@ public class InterfaceInfoController {
 
     // endregion
 
+    /**
+     * 发布
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long id = idRequest.getId();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        //判断接口是否可以调用
+        com.xipian.emonapiclientsdk.model.User user = new com.xipian.emonapiclientsdk.model.User();
+        user.setUsername("test");
+        String username = emonApiClient.getUsernameByPost(user);
+        if (StringUtils.isBlank(username)){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"接口验证失败");
+        }
+        // 修改接口数据库中的状态字段
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+
+    /**
+     * 下线
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long id = idRequest.getId();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 修改接口数据库中的状态字段
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
 }
