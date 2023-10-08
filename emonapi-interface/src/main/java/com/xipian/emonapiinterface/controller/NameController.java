@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/name")
 public class NameController {
 
-    @GetMapping("/")
+    @GetMapping("/get")
     public String getNameByGet(String name) {
         return "GET 你的名字是" +name;
     }
 
-    @PostMapping("/")
+    @PostMapping("/post")
     public String getNameByPost(@RequestParam String name) {
         return "POST 你的名字是" +name;
     }
@@ -52,7 +52,7 @@ public class NameController {
         }
 
         // TODO 实际情况中是从数据库中查出secretKey
-        String serverSign = SignUtils.getSign(body, "gaomu");
+        String serverSign = SignUtils.getSign(body, "abcdef");
         if (!sign.equals(serverSign)){
             throw new RuntimeException("无权限");
         }

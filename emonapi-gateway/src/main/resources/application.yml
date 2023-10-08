@@ -1,0 +1,22 @@
+server:
+  port: 8090
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddResponseHeader=source,emonapi
+      routes:
+        - id: api_route
+          uri: http://localhost:8123
+          predicates:
+            - Path=/api/**
+            - Method=get
+
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: trace

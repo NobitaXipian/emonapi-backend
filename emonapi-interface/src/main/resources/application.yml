@@ -5,4 +5,4 @@ server:
 emonapi:
   client:
     access-key: gaomu
-    secret-key: gaomu
+    secret-key: abcdef
