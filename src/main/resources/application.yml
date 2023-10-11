@@ -37,3 +37,13 @@ emonapi:
   client:
     access-key: gaomu
     secret-key: abcdef
+
+dubbo:
+  application:
+    name: dubbo-emonapi-backend-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848

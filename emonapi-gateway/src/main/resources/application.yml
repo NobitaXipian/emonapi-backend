@@ -11,7 +11,7 @@ spring:
           uri: http://localhost:8123
           predicates:
             - Path=/api/**
-            - Method=get
+            - Method=get,post
 
 
 logging:
@@ -20,3 +20,13 @@ logging:
       springframework:
         cloud:
           gateway: trace
+
+dubbo:
+  application:
+    name: dubbo-emonapi-backend-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848

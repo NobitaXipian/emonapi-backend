@@ -1,7 +1,7 @@
 package com.xipian.emonapi.mapper;
 
-import com.xipian.emonapi.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.xipian.emonapicommon.model.entity.UserInterfaceInfo;
 
 /**
 * @author NOBITA

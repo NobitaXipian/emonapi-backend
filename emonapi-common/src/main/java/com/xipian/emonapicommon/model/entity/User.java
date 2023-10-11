@@ -1,4 +1,4 @@
-package com.xipian.emonapi.model.entity;
+package com.xipian.emonapicommon.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

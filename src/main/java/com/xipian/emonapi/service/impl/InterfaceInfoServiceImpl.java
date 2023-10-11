@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xipian.emonapi.common.ErrorCode;
 import com.xipian.emonapi.exception.BusinessException;
 import com.xipian.emonapi.mapper.InterfaceInfoMapper;
-import com.xipian.emonapi.model.entity.InterfaceInfo;
 import com.xipian.emonapi.service.InterfaceInfoService;
+import com.xipian.emonapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package com.xipian.emonapi.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xipian.emonapi.model.entity.User;
+import com.xipian.emonapicommon.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,7 +1,7 @@
 package com.xipian.emonapi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xipian.emonapi.model.entity.InterfaceInfo;
+import com.xipian.emonapicommon.model.entity.InterfaceInfo;
 
 /**
 * @author NOBITA
