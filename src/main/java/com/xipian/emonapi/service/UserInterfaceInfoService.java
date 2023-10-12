@@ -19,4 +19,12 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @return
      */
     boolean invokeCount(long interfaceInfoId, long userId);
+
+    /**
+     * 获取接口与用户的信息
+     * @param interfaceInfoId
+     * @param userId
+     * @return
+     */
+    public UserInterfaceInfo getUserInterfaceInfo(long interfaceInfoId, long userId);
 }

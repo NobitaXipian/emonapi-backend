@@ -3,6 +3,7 @@ package com.xipian.emonapigateway;
 import com.xipian.emonapiclientsdk.utils.SignUtils;
 import com.xipian.emonapicommon.model.entity.InterfaceInfo;
 import com.xipian.emonapicommon.model.entity.User;
+import com.xipian.emonapicommon.model.enums.InterfaceInfoStatusEnum;
 import com.xipian.emonapicommon.service.InnerInterfaceInfoService;
 import com.xipian.emonapicommon.service.InnerUserInterfaceInfoService;
 import com.xipian.emonapicommon.service.InnerUserService;
@@ -125,9 +126,21 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         }catch (Exception e){
             log.error("getInterfaceInfo error",e);
         }
-        if (interfaceInfo == null){
+        // 如果接口不存在或已下线则结束访问
+        if (interfaceInfo == null || interfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()){
             return handleNoAuth(response);
         }
+        // 如果接口剩余调用次数小于等于0，则无效
+        boolean validLeftNum = false;
+        try {
+             validLeftNum = innerUserInterfaceInfoService.validLeftNum(interfaceInfo.getId(), invokeUser.getId());
+        }catch (Exception e){
+            log.error("validLeftNum error",e);
+        }
+        if (!validLeftNum){
+            return handleNoAuth(response);
+        }
+
         // 5.请求转发，调用模拟接口
         //Mono<Void> filter = chain.filter(exchange);
 

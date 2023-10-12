@@ -12,7 +12,7 @@ import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.xipian.emonapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
-import com.xipian.emonapi.model.enums.InterfaceInfoStatusEnum;
+import com.xipian.emonapicommon.model.enums.InterfaceInfoStatusEnum;
 import com.xipian.emonapi.service.InterfaceInfoService;
 import com.xipian.emonapi.service.UserService;
 import com.xipian.emonapiclientsdk.client.EmonApiClient;
