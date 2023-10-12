@@ -55,6 +55,6 @@ public class NameController {
         // if (!sign.equals(serverSign)){
         //     throw new RuntimeException("无权限");
         // }
-        return "POST 用户名称是" +user.getUsername();
+        return "让我猜一猜，你的名字肯定是" +user.getUsername();
     }
 }
