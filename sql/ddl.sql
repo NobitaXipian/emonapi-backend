@@ -24,7 +24,7 @@ create table if not exists user
     ) comment '用户';
 
 -- 接口信息
-create table if not exists yuapi.`interface_info`
+create table if not exists emonapi.`interface_info`
 (
     `id` bigint not null auto_increment comment '主键' primary key,
     `name` varchar(256) not null comment '名称',
@@ -42,7 +42,7 @@ create table if not exists yuapi.`interface_info`
     ) comment '接口信息';
 
 -- 用户调用接口关系表
-create table if not exists yuapi.`user_interface_info`
+create table if not exists emonapi.`user_interface_info`
 (
     `id` bigint not null auto_increment comment '主键' primary key,
     `userId` bigint not null comment '调用用户 id',
